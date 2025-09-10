@@ -7,7 +7,8 @@ import {
   BarChart3, 
   Settings,
   Shield,
-  LogOut
+  LogOut,
+  MessageSquare
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -24,6 +25,7 @@ const AdminSidebar = ({ activeSection, onSectionChange, onLogout }: AdminSidebar
     { id: 'users', label: 'Manage Users', icon: Users },
     { id: 'reports', label: 'View Reports', icon: FileText },
     { id: 'manage-reports', label: 'Manage Reports', icon: FileText },
+    { id: 'feed', label: 'Community Feed', icon: MessageSquare },
     { id: 'manage-admins', label: 'Manage Admins', icon: Shield },
     { id: 'leaderboard', label: 'Leaderboard Management', icon: Trophy },
     { id: 'analytics', label: 'Analytics', icon: BarChart3 },

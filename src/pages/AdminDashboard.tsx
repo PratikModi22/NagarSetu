@@ -13,6 +13,7 @@ import AdminAnalytics from '@/components/admin/AdminAnalytics';
 import AdminSettings from '@/components/admin/AdminSettings';
 import AdminReportManager from '@/components/admin/AdminReportManager';
 import ManageAdmins from '@/components/admin/ManageAdmins';
+import FeedScreen from '@/components/FeedScreen';
 
 interface LeaderboardUser {
   id: string;
@@ -74,6 +75,8 @@ const AdminDashboard = () => {
         return <ViewReports reports={reports} />;
       case 'manage-reports':
         return <AdminReportManager reports={reports} onUpdateReport={updateReport} uploadImage={uploadImage} />;
+      case 'feed':
+        return <FeedScreen reports={reports} />;
       case 'manage-admins':
         return <ManageAdmins />;
       case 'leaderboard':

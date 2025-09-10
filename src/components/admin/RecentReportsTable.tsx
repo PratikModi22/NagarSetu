@@ -12,7 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Eye, Edit, Trash2, Download, Filter } from 'lucide-react';
+import { Eye, Edit, Download, Filter } from 'lucide-react';
 import { WasteReport } from '@/pages/Index';
 
 interface RecentReportsTableProps {
@@ -174,9 +174,7 @@ const RecentReportsTable = ({ reports }: RecentReportsTableProps) => {
                       <Button variant="ghost" size="sm">
                         <Edit className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      {/* Removed delete button - admins cannot delete reports */}
                     </div>
                   </TableCell>
                 </TableRow>

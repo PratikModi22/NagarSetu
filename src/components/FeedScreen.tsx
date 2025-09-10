@@ -11,7 +11,7 @@ interface FeedScreenProps {
 const FeedScreen: React.FC<FeedScreenProps> = ({ reports }) => {
   // Filter reports that have both before and after images (completed reports)
   const completedReports = reports.filter(
-    report => report.beforeImage && report.afterImage && 
+    report => (report.image || report.beforeImage) && report.afterImage && 
     (report.status === 'completed' || report.status === 'cleaned')
   ).sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
 
