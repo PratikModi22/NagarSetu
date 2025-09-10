@@ -6,8 +6,7 @@ import { Crown, Trophy, Medal, Users, TrendingUp } from 'lucide-react';
 
 interface LeaderboardUser {
   id: string;
-  name: string;
-  email: string;
+  display_name: string;
   total_reports: number;
   weekly_reports: number;
   monthly_reports: number;
@@ -100,8 +99,8 @@ const LeaderboardManagement = ({ leaderboard }: LeaderboardManagementProps) => {
                     {index + 1}
                   </div>
                   <div>
-                    <p className="font-semibold">{user.name}</p>
-                    <p className="text-sm text-muted-foreground">{user.email}</p>
+                    <p className="font-semibold">{user.display_name}</p>
+                    <p className="text-sm text-muted-foreground">ID: {user.id.slice(0, 8)}...</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">

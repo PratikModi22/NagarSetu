@@ -157,6 +157,59 @@ export type Database = {
           },
         ]
       }
+      leaderboard_stats: {
+        Row: {
+          citizen_of_month_count: number | null
+          citizen_of_week_count: number | null
+          citizen_of_year_count: number | null
+          created_at: string | null
+          display_name: string
+          id: string
+          location: string | null
+          monthly_reports: number | null
+          total_reports: number | null
+          updated_at: string | null
+          weekly_reports: number | null
+          yearly_reports: number | null
+        }
+        Insert: {
+          citizen_of_month_count?: number | null
+          citizen_of_week_count?: number | null
+          citizen_of_year_count?: number | null
+          created_at?: string | null
+          display_name: string
+          id: string
+          location?: string | null
+          monthly_reports?: number | null
+          total_reports?: number | null
+          updated_at?: string | null
+          weekly_reports?: number | null
+          yearly_reports?: number | null
+        }
+        Update: {
+          citizen_of_month_count?: number | null
+          citizen_of_week_count?: number | null
+          citizen_of_year_count?: number | null
+          created_at?: string | null
+          display_name?: string
+          id?: string
+          location?: string | null
+          monthly_reports?: number | null
+          total_reports?: number | null
+          updated_at?: string | null
+          weekly_reports?: number | null
+          yearly_reports?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leaderboard_stats_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       locations: {
         Row: {
           city: string

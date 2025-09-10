@@ -16,8 +16,7 @@ import ManageAdmins from '@/components/admin/ManageAdmins';
 
 interface LeaderboardUser {
   id: string;
-  name: string;
-  email: string;
+  display_name: string;
   total_reports: number;
   weekly_reports: number;
   monthly_reports: number;
@@ -46,7 +45,7 @@ const AdminDashboard = () => {
 
   const fetchLeaderboard = async () => {
     const { data } = await supabase
-      .from('users')
+      .from('leaderboard_stats')
       .select('*')
       .order('total_reports', { ascending: false })
       .limit(10);

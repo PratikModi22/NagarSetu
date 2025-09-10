@@ -6,8 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 
 interface LeaderboardUser {
   id: string;
-  name: string;
-  email: string;
+  display_name: string;
   total_reports: number;
   weekly_reports: number;
   monthly_reports: number;
@@ -27,7 +26,7 @@ const Leaderboard = () => {
 
   const fetchUsers = async () => {
     const { data } = await supabase
-      .from('users')
+      .from('leaderboard_stats')
       .select('*')
       .order('total_reports', { ascending: false });
     
@@ -54,7 +53,7 @@ const Leaderboard = () => {
                 {index + 1}
               </div>
               <div>
-                <p className="font-semibold">{user.name}</p>
+                <p className="font-semibold">{user.display_name}</p>
                 <div className="flex gap-2 mt-1">
                   {user.citizen_of_week_count > 0 && (
                     <Badge variant="outline" className="text-xs">

@@ -15,8 +15,7 @@ import { Search, UserPlus, MoreVertical, Crown, Trophy, Medal } from 'lucide-rea
 
 interface LeaderboardUser {
   id: string;
-  name: string;
-  email: string;
+  display_name: string;
   total_reports: number;
   weekly_reports: number;
   monthly_reports: number;
@@ -34,8 +33,7 @@ const ManageUsers = ({ leaderboard }: ManageUsersProps) => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const filteredUsers = leaderboard.filter(user =>
-    user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchTerm.toLowerCase())
+    user.display_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -73,8 +71,8 @@ const ManageUsers = ({ leaderboard }: ManageUsersProps) => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Email</TableHead>
+                  <TableHead>Display Name</TableHead>
+                  <TableHead>User ID</TableHead>
                   <TableHead>Reports</TableHead>
                   <TableHead>Achievements</TableHead>
                   <TableHead>Status</TableHead>
@@ -84,8 +82,8 @@ const ManageUsers = ({ leaderboard }: ManageUsersProps) => {
               <TableBody>
                 {filteredUsers.map((user) => (
                   <TableRow key={user.id}>
-                    <TableCell className="font-medium">{user.name}</TableCell>
-                    <TableCell>{user.email}</TableCell>
+                    <TableCell className="font-medium">{user.display_name}</TableCell>
+                    <TableCell className="font-mono text-xs">{user.id.slice(0, 8)}...</TableCell>
                     <TableCell>
                       <div className="flex flex-col">
                         <span className="font-semibold">{user.total_reports}</span>
