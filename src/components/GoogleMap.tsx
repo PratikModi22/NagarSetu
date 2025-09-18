@@ -3,16 +3,26 @@ import { Loader } from '@googlemaps/js-api-loader';
 import { WasteReport } from '../pages/Index';
 import { supabase } from '../integrations/supabase/client';
 
+interface RoutePoint {
+  lat: number;
+  lng: number;
+  address: string;
+  isStart?: boolean;
+}
+
 interface GoogleMapProps {
   reports: WasteReport[];
   onReportSelect: (report: WasteReport) => void;
   center?: { lat: number; lng: number } | null;
+  routePoints?: RoutePoint[];
+  showRoute?: boolean;
 }
 
-const GoogleMap = ({ reports, onReportSelect, center }: GoogleMapProps) => {
+const GoogleMap = ({ reports, onReportSelect, center, routePoints, showRoute }: GoogleMapProps) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<google.maps.Map | null>(null);
   const markersRef = useRef<google.maps.Marker[]>([]);
+  const directionsRenderer = useRef<google.maps.DirectionsRenderer | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -143,6 +153,55 @@ const GoogleMap = ({ reports, onReportSelect, center }: GoogleMapProps) => {
       mapInstanceRef.current.fitBounds(bounds);
     }
   }, [reports, onReportSelect]);
+
+  // Handle route visualization
+  useEffect(() => {
+    if (!mapInstanceRef.current || !showRoute || !routePoints || routePoints.length < 2) {
+      // Clear existing route
+      if (directionsRenderer.current) {
+        directionsRenderer.current.setMap(null);
+      }
+      return;
+    }
+
+    const directionsService = new google.maps.DirectionsService();
+    
+    if (!directionsRenderer.current) {
+      directionsRenderer.current = new google.maps.DirectionsRenderer({
+        suppressMarkers: false,
+        polylineOptions: {
+          strokeColor: '#4285f4',
+          strokeWeight: 4,
+          strokeOpacity: 0.8
+        }
+      });
+    }
+
+    directionsRenderer.current.setMap(mapInstanceRef.current);
+
+    // Create waypoints (all points except first and last)
+    const waypoints = routePoints.slice(1, -1).map(point => ({
+      location: { lat: point.lat, lng: point.lng },
+      stopover: true
+    }));
+
+    const request: google.maps.DirectionsRequest = {
+      origin: { lat: routePoints[0].lat, lng: routePoints[0].lng },
+      destination: { lat: routePoints[routePoints.length - 1].lat, lng: routePoints[routePoints.length - 1].lng },
+      waypoints: waypoints,
+      optimizeWaypoints: false, // We already optimized the order
+      travelMode: google.maps.TravelMode.DRIVING
+    };
+
+    directionsService.route(request, (result, status) => {
+      if (status === 'OK' && directionsRenderer.current) {
+        directionsRenderer.current.setDirections(result);
+      } else {
+        console.error('Directions request failed due to:', status);
+      }
+    });
+
+  }, [routePoints, showRoute]);
 
   return (
     <div className="w-full h-96 rounded-lg overflow-hidden shadow-lg border border-gray-200 relative">
