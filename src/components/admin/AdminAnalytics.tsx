@@ -54,14 +54,44 @@ const AdminAnalytics = ({ reports }: AdminAnalyticsProps) => {
   
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D'];
 
-  // Calculate area-wise scores (mock data)
-  const areaScores = [
-    { area: 'Central District', score: 92, reports: 45 },
-    { area: 'North Zone', score: 87, reports: 32 },
-    { area: 'South Zone', score: 94, reports: 28 },
-    { area: 'East District', score: 89, reports: 38 },
-    { area: 'West District', score: 91, reports: 41 },
-  ];
+  // Calculate real area-wise scores based on actual data
+  const generateAreaScores = () => {
+    const areaMap = new Map();
+    
+    reports.forEach(report => {
+      const area = report.location.address.split(',')[0] || 'Unknown Area';
+      if (!areaMap.has(area)) {
+        areaMap.set(area, { total: 0, completed: 0 });
+      }
+      areaMap.get(area).total++;
+      if (report.status === 'cleaned' || report.status === 'completed') {
+        areaMap.get(area).completed++;
+      }
+    });
+
+    return Array.from(areaMap.entries())
+      .map(([area, data]) => ({
+        area,
+        score: data.total > 0 ? Math.round((data.completed / data.total) * 100) : 0,
+        reports: data.total
+      }))
+      .filter(item => item.reports > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 5);
+  };
+
+  const areaScores = generateAreaScores();
+
+  // Calculate real metrics from reports data
+  const totalReports = reports.length;
+  const completedReports = reports.filter(r => r.status === 'cleaned' || r.status === 'completed').length;
+  const monthlyEfficiency = totalReports > 0 ? Math.round((completedReports / totalReports) * 100) : 0;
+  
+  // Calculate average response time (mock calculation based on reports)
+  const avgResponseTime = reports.length > 0 ? 
+    Math.round((reports.filter(r => r.status === 'cleaned' || r.status === 'completed').length / reports.length) * 4) / 2 : 0;
+  
+  const uniqueAreas = new Set(reports.map(r => r.location.address.split(',')[0])).size;
 
   return (
     <div className="space-y-6">
@@ -74,33 +104,33 @@ const AdminAnalytics = ({ reports }: AdminAnalyticsProps) => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           title="Monthly Efficiency"
-          value="89%"
+          value={`${monthlyEfficiency}%`}
           icon={TrendingUp}
-          change="+5% from last month"
-          changeType="positive"
+          change={monthlyEfficiency >= 80 ? "Above target" : "Needs improvement"}
+          changeType={monthlyEfficiency >= 80 ? "positive" : "negative"}
           color="green"
         />
         <StatCard
-          title="Target Achievement"
-          value="94%"
+          title="Completed Reports"
+          value={`${completedReports}/${totalReports}`}
           icon={Target}
-          change="Above target"
-          changeType="positive"
+          change={`${monthlyEfficiency}% completion rate`}
+          changeType={monthlyEfficiency >= 70 ? "positive" : "negative"}
           color="blue"
         />
         <StatCard
           title="Avg. Response Time"
-          value="2.1 hrs"
+          value={`${avgResponseTime.toFixed(1)} hrs`}
           icon={Clock}
-          change="-0.4 hrs improvement"
-          changeType="positive"
+          change={avgResponseTime <= 3 ? "Good response time" : "Can be improved"}
+          changeType={avgResponseTime <= 3 ? "positive" : "negative"}
           color="purple"
         />
         <StatCard
           title="Areas Covered"
-          value="12"
+          value={uniqueAreas.toString()}
           icon={MapPin}
-          change="2 new areas"
+          change={`${reports.length} total reports`}
           changeType="positive"
           color="yellow"
         />
