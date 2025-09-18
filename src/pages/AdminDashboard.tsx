@@ -13,6 +13,7 @@ import AdminAnalytics from '@/components/admin/AdminAnalytics';
 import AdminSettings from '@/components/admin/AdminSettings';
 import AdminReportManager from '@/components/admin/AdminReportManager';
 import ManageAdmins from '@/components/admin/ManageAdmins';
+import RouteOptimizer from '@/components/admin/RouteOptimizer';
 import FeedScreen from '@/components/FeedScreen';
 
 interface LeaderboardUser {
@@ -75,6 +76,8 @@ const AdminDashboard = () => {
         return <ViewReports reports={reports} />;
       case 'manage-reports':
         return <AdminReportManager reports={reports} onUpdateReport={updateReport} uploadImage={uploadImage} />;
+      case 'route-optimizer':
+        return <RouteOptimizer reports={reports} />;
       case 'feed':
         return <FeedScreen reports={reports} />;
       case 'manage-admins':
