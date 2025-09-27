@@ -18,11 +18,6 @@ export default defineConfig(({ mode }) => ({
     // Do not pre-bundle `ethers` during dev -- we use dynamic imports at runtime.
     exclude: ["ethers"],
   },
-  build: {
-    rollupOptions: {
-      // Prevent Rollup from trying to resolve/bundle `ethers` during SSR/build on platforms
-      // where it causes resolution failures (e.g. Vercel). We dynamically import it at runtime.
-      external: ["ethers"],
-    },
-  },
+  // Note: we do not externalize `ethers` here because the app dynamically imports it
+  // at runtime; letting Vite bundle it ensures the browser can resolve the module.
 }));
