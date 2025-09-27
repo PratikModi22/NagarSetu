@@ -15,6 +15,14 @@ export default defineConfig(({ mode }) => ({
     },
   },
   optimizeDeps: {
-    include: ["ethers"], // <- add this line
+    // Do not pre-bundle `ethers` during dev -- we use dynamic imports at runtime.
+    exclude: ["ethers"],
+  },
+  build: {
+    rollupOptions: {
+      // Prevent Rollup from trying to resolve/bundle `ethers` during SSR/build on platforms
+      // where it causes resolution failures (e.g. Vercel). We dynamically import it at runtime.
+      external: ["ethers"],
+    },
   },
 }));
