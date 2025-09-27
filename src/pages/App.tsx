@@ -1,16 +1,17 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import { Button } from '@/components/ui/button';
-import HomeScreen from '../components/HomeScreen';
-import UploadScreen from '../components/UploadScreen';
-import MapView from '../components/MapView';
-import ReportCard from '../components/ReportCard';
-import AnalyticsScreen from '../components/AnalyticsScreen';
-import Navigation from '../components/Navigation';
-import Leaderboard from '../components/Leaderboard';
-import FeedScreen from '../components/FeedScreen';
-import { useWasteReports } from '../hooks/useWasteReports';
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
+import HomeScreen from "../components/HomeScreen";
+import UploadScreen from "../components/UploadScreen";
+import MapView from "../components/MapView";
+import ReportCard from "../components/ReportCard";
+import AnalyticsScreen from "../components/AnalyticsScreen";
+import Navigation from "../components/Navigation";
+import Leaderboard from "../components/Leaderboard";
+import FeedScreen from "../components/FeedScreen";
+import BlockchainLogs from "../components/BlockchainLogs";
+import { useWasteReports } from "../hooks/useWasteReports";
 
 export type WasteReport = {
   id: string;
@@ -20,7 +21,7 @@ export type WasteReport = {
     lng: number;
     address: string;
   };
-  status: 'dirty' | 'cleaning' | 'cleaned' | 'in-progress' | 'completed';
+  status: "dirty" | "cleaning" | "cleaned" | "in-progress" | "completed";
   category: string;
   remarks: string;
   reportedAt: Date;
@@ -32,28 +33,38 @@ export type WasteReport = {
 
 const App = () => {
   const { user, signOut, isAdmin } = useAuth();
-  const [currentScreen, setCurrentScreen] = useState<'home' | 'upload' | 'map' | 'report' | 'analytics' | 'leaderboard' | 'feed'>('home');
-  const [selectedReport, setSelectedReport] = useState<WasteReport | null>(null);
-  
-  const { 
-    reports, 
-    loading, 
-    addReport, 
-    updateReport, 
-    uploadImage 
-  } = useWasteReports();
+  const [currentScreen, setCurrentScreen] = useState<
+    | "home"
+    | "upload"
+    | "map"
+    | "report"
+    | "analytics"
+    | "leaderboard"
+    | "feed"
+    | "blockchain"
+  >("home");
+  const [selectedReport, setSelectedReport] = useState<WasteReport | null>(
+    null
+  );
+
+  const { reports, loading, addReport, updateReport, uploadImage } =
+    useWasteReports();
 
   const handleReportSelect = (report: WasteReport) => {
     setSelectedReport(report);
-    setCurrentScreen('report');
+    setCurrentScreen("report");
   };
 
   const getStats = () => {
     const total = reports.length;
-    const cleaned = reports.filter(r => r.status === 'cleaned' || r.status === 'completed').length;
-    const pending = reports.filter(r => r.status === 'dirty').length;
-    const inProgress = reports.filter(r => r.status === 'cleaning' || r.status === 'in-progress').length;
-    
+    const cleaned = reports.filter(
+      (r) => r.status === "cleaned" || r.status === "completed"
+    ).length;
+    const pending = reports.filter((r) => r.status === "dirty").length;
+    const inProgress = reports.filter(
+      (r) => r.status === "cleaning" || r.status === "in-progress"
+    ).length;
+
     return { total, cleaned, pending, inProgress };
   };
 
@@ -75,7 +86,10 @@ const App = () => {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-8">
               <h1 className="text-xl font-bold text-primary">Green Hash</h1>
-              <Navigation currentScreen={currentScreen} setCurrentScreen={setCurrentScreen} />
+              <Navigation
+                currentScreen={currentScreen}
+                setCurrentScreen={setCurrentScreen}
+              />
             </div>
             <div className="flex items-center gap-4">
               {isAdmin && (
@@ -86,7 +100,9 @@ const App = () => {
                 </Link>
               )}
               <div className="flex items-center gap-4">
-                <span className="text-sm text-muted-foreground">Hello, {user?.email}</span>
+                <span className="text-sm text-muted-foreground">
+                  Hello, {user?.email}
+                </span>
                 <Button onClick={signOut} variant="outline" size="sm">
                   Sign Out
                 </Button>
@@ -95,53 +111,48 @@ const App = () => {
           </div>
         </div>
       </div>
-      
+
       <div className="pt-6">
-        {currentScreen === 'home' && (
-          <HomeScreen 
-            onNavigate={setCurrentScreen} 
+        {currentScreen === "home" && (
+          <HomeScreen
+            onNavigate={setCurrentScreen}
             stats={getStats()}
             recentReports={reports.slice(0, 3)}
           />
         )}
-        
-        {currentScreen === 'upload' && (
-          <UploadScreen 
+
+        {currentScreen === "upload" && (
+          <UploadScreen
             onAddReport={addReport}
             onNavigate={setCurrentScreen}
             uploadImage={uploadImage}
           />
         )}
-        
-        {currentScreen === 'map' && (
-          <MapView 
-            reports={reports}
-            onReportSelect={handleReportSelect}
-          />
+
+        {currentScreen === "map" && (
+          <MapView reports={reports} onReportSelect={handleReportSelect} />
         )}
-        
-        {currentScreen === 'report' && selectedReport && (
-          <ReportCard 
+
+        {currentScreen === "report" && selectedReport && (
+          <ReportCard
             report={selectedReport}
-            onBack={() => setCurrentScreen('map')}
+            onBack={() => setCurrentScreen("map")}
             onDelete={() => {}} // Users can no longer delete reports
             showDeleteButton={false}
           />
         )}
-        
-        {currentScreen === 'analytics' && (
-          <AnalyticsScreen reports={reports} />
-        )}
 
-        {currentScreen === 'leaderboard' && (
+        {currentScreen === "analytics" && <AnalyticsScreen reports={reports} />}
+
+        {currentScreen === "leaderboard" && (
           <div className="container mx-auto px-4 py-8">
             <Leaderboard />
           </div>
         )}
 
-        {currentScreen === 'feed' && (
-          <FeedScreen reports={reports} />
-        )}
+        {currentScreen === "feed" && <FeedScreen reports={reports} />}
+
+        {currentScreen === "blockchain" && <BlockchainLogs />}
       </div>
     </div>
   );
