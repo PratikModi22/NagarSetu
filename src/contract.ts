@@ -1,5 +1,3 @@
-import { BrowserProvider, Contract } from "ethers";
-
 export const contractAddress = "0x5F213F8dF734215746D283dc668d234B868a66Cc";
 export const contractABI = [
   {
@@ -498,14 +496,18 @@ export const contractABI = [
   },
 ];
 
-let provider: BrowserProvider | null = null;
-let contract: Contract | null = null;
+let provider: any = null;
+let contract: any = null;
 
 // Initialize the contract with a signer for transactions
 export async function initializeContractWithSigner() {
   if (!window.ethereum) {
     throw new Error("Please install MetaMask to interact with the blockchain");
   }
+  // Dynamically import ethers to avoid bundling it during SSR/build (Vercel)
+  const ethers = await import("ethers");
+  const BrowserProvider = ethers.BrowserProvider;
+  const Contract = ethers.Contract;
   provider = new BrowserProvider(window.ethereum);
   contract = new Contract(
     contractAddress,
@@ -520,6 +522,9 @@ export async function initializeContractReadOnly() {
   if (!window.ethereum) {
     throw new Error("Please install MetaMask to view blockchain data");
   }
+  const ethers = await import("ethers");
+  const BrowserProvider = ethers.BrowserProvider;
+  const Contract = ethers.Contract;
   provider = new BrowserProvider(window.ethereum);
   contract = new Contract(contractAddress, contractABI, provider);
   return contract;
